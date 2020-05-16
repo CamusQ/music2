@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.music2.DB.dao.CommentDao">
+
+    <resultMap type="com.example.music2.DB.entity.Comment" id="CommentMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="replyAlbumId" column="reply_album_id" jdbcType="INTEGER"/>
+        <result property="replyCommId" column="reply_comm_id" jdbcType="INTEGER"/>
+        <result property="commTime" column="comm_time" jdbcType="TIMESTAMP"/>
+        <result property="commName" column="comm_name" jdbcType="VARCHAR"/>
+        <result property="commContent" column="comm_content" jdbcType="VARCHAR"/>
+        <result property="headerImageUrl" column="header_image_url" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="querySlaveComment" resultMap="CommentMap">
+        select
+          id, reply_album_id, reply_comm_id, comm_time, comm_name, comm_content
+        from music.comment
+        where reply_comm_id = #{id}
+    </select>
+
+    <select id="queryByAlbumID" resultMap="CommentMap">
+        select
+          c.id, c.reply_album_id, c.reply_comm_id, c.comm_time, c.comm_name, c.comm_content,u.header_image_url
+        from music.comment c,user u
+        where c.reply_album_id = #{replyAlbumId} and c.comm_name = u.name and c.reply_comm_id = 0
+        order by c.comm_time
+    </select>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="CommentMap">
+        select
+          id, reply_album_id, reply_comm_id, comm_time, comm_name, comm_content
+        from music.comment
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="CommentMap">
+        select
+          id, reply_album_id, reply_comm_id, comm_time, comm_name, comm_content
+        from music.comment
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="CommentMap">
+        select
+          id, reply_album_id, reply_comm_id, comm_time, comm_name, comm_content
+        from music.comment
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="replyAlbumId != null">
+                and reply_album_id = #{replyAlbumId}
+            </if>
+            <if test="replyCommId != null">
+                and reply_comm_id = #{replyCommId}
+            </if>
+            <if test="commTime != null">
+                and comm_time = #{commTime}
+            </if>
+            <if test="commName != null and commName != ''">
+                and comm_name = #{commName}
+            </if>
+            <if test="commContent != null and commContent != ''">
+                and comm_content = #{commContent}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into music.comment(reply_album_id, reply_comm_id, comm_time, comm_name, comm_content)
+        values (#{replyAlbumId}, #{replyCommId}, #{commTime}, #{commName}, #{commContent})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update music.comment
+        <set>
+            <if test="replyAlbumId != null">
+                reply_album_id = #{replyAlbumId},
+            </if>
+            <if test="replyCommId != null">
+                reply_comm_id = #{replyCommId},
+            </if>
+            <if test="commTime != null">
+                comm_time = #{commTime},
+            </if>
+            <if test="commName != null and commName != ''">
+                comm_name = #{commName},
+            </if>
+            <if test="commContent != null and commContent != ''">
+                comm_content = #{commContent},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from music.comment where id = #{id}
+    </delete>
+
+</mapper>

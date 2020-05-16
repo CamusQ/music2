@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.music2.DB.dao.UserDao">
+
+    <resultMap type="com.example.music2.DB.entity.User" id="UserMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="VARCHAR"/>
+        <result property="registerData" column="register_data" jdbcType="TIMESTAMP"/>
+        <result property="collectList" column="collect_list" jdbcType="LONGVARCHAR"/>
+        <result property="isSinger" column="is_singer" jdbcType="INTEGER"/>
+        <result property="headerImageUrl" column="header_image_url" jdbcType="VARCHAR"/>
+        <result property="albumName" column="album_name" jdbcType="VARCHAR"/>
+        <result property="uploadDate" column="upload_date" jdbcType="TIMESTAMP"/>
+        <result property="ispassed" column="ispassed" jdbcType="INTEGER"/>
+        <result property="recentlyListen" column="recently_listen" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserMap">
+        select
+          id, name,password, nick_name, sex, age, register_data, is_singer, header_image_url, album_name, upload_date, ispassed,collect_list,recently_listen
+        from music.user
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UserMap">
+        select
+          id, name,password, nick_name, sex, age, register_data, is_singer, header_image_url, album_name, upload_date, ispassed,collect_list,recently_listen
+        from music.user
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="UserMap">
+        select
+        id, name,password, nick_name, sex, age, register_data, is_singer, header_image_url, album_name, upload_date,
+        ispassed,collect_list,recently_listen
+        from music.user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="nickName != null and nickName != ''">
+                and nick_name = #{nickName}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="age != null and age != ''">
+                and age = #{age}
+            </if>
+            <if test="registerData != null">
+                and register_data = #{registerData}
+            </if>
+            <if test="isSinger != null">
+                and is_singer = #{isSinger}
+            </if>
+            <if test="headerImageUrl != null and headerImageUrl != ''">
+                and header_image_url = #{headerImageUrl}
+            </if>
+            <if test="albumName != null and albumName != ''">
+                and album_name = #{albumName}
+            </if>
+            <if test="uploadDate != null">
+                and upload_date = #{uploadDate}
+            </if>
+            <if test="ispassed != null">
+                and ispassed = #{ispassed}
+            </if>
+            <if test="collectList != null and collectList != ''">
+                and collect_list = #{collectList}
+            </if>
+            <if test="recentlyListen != null and recentlyListen != ''">
+                and recently_listen = #{recentlyListen}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into music.user(name,password, nick_name, sex, age, register_data, is_singer, header_image_url, album_name, upload_date, ispassed,collect_list,recently_listen)
+        values (#{name},#{password}, #{nickName}, #{sex}, #{age}, #{registerData}, #{isSinger}, #{headerImageUrl}, #{albumName}, #{uploadDate}, #{ispassed},#{collectList},#{recentlyListen})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update music.user
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password}
+            </if>
+            <if test="nickName != null and nickName != ''">
+                nick_name = #{nickName},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="age != null and age != ''">
+                age = #{age},
+            </if>
+            <if test="registerData != null">
+                register_data = #{registerData},
+            </if>
+            <if test="isSinger != null">
+                is_singer = #{isSinger},
+            </if>
+            <if test="headerImageUrl != null and headerImageUrl != ''">
+                header_image_url = #{headerImageUrl},
+            </if>
+            <if test="albumName != null and albumName != ''">
+                album_name = #{albumName},
+            </if>
+            <if test="uploadDate != null">
+                upload_date = #{uploadDate},
+            </if>
+            <if test="ispassed != null">
+                ispassed = #{ispassed},
+            </if>
+            <if test="collectList != null and collectList != ''">
+                collect_list = #{collectList}
+            </if>
+            <if test="recentlyListen != null and recentlyListen != ''">
+                recently_listen = #{recentlyListen}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from music.user where id = #{id}
+    </delete>
+
+    <!--通过用户昵称 查询收藏夹-->
+    <select id="queryByNickName" resultType="String">
+         select collect_list
+         from music.user
+         where nick_name = #{nickName}
+    </select>
+
+</mapper>
